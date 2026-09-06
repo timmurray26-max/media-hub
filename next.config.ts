@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // better-sqlite3 is a native Node addon — keep it external to the bundle
-  serverExternalPackages: ["better-sqlite3"],
+  // node:sqlite is a Node.js built-in — DB code must run in the Node.js runtime
+  // (not Edge). Pages/routes that touch the DB already set runtime = "nodejs".
 };
 
 export default nextConfig;

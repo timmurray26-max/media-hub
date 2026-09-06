@@ -6,6 +6,7 @@ import { listItems } from "@/lib/db";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export default async function AdminPage() {
   if (!(await isAuthenticated())) {

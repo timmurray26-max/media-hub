@@ -10,6 +10,7 @@ import { getItemBySlug } from "@/lib/db";
 import { fileUrl, formatBytes, formatDate, sharePath } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 type Props = { params: Promise<{ slug: string }> };
 

@@ -4,6 +4,7 @@ import SearchFilters from "@/components/SearchFilters";
 import { getAllTags, listItems } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export default async function HomePage({
   searchParams,

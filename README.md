@@ -7,7 +7,7 @@ Visitors browse freely. Only the owner (password login) can upload or delete.
 
 ## Quick start
 
-1. Install Node.js LTS from https://nodejs.org
+1. Install Node.js 22.5+ from https://nodejs.org (Node 24 recommended)
 2. Open a terminal in this project folder
 3. Copy env example: cp .env.example .env.local
 4. Edit .env.local and set ADMIN_PASSWORD and SESSION_SECRET
@@ -51,13 +51,13 @@ This is a Next.js app, so Vercel can host the code. Caveat: SQLite and local upl
 
 ## Stack
 
-Next.js App Router, TypeScript, Tailwind CSS, better-sqlite3, HMAC-signed session cookie.
+Next.js App Router, TypeScript, Tailwind CSS, node:sqlite (DatabaseSync), HMAC-signed session cookie.
 
 ## Troubleshooting
 
 - Wrong password: fix ADMIN_PASSWORD in .env.local and restart the server
 - Empty library: delete data/media.db and restart; demo items seed when the DB is empty
-- Native module install issues: install OS build tools (Python + a C++ compiler) and retry package install
+- node:sqlite missing: use Node.js 22.5+. No Visual Studio Build Tools needed on Windows.
 
 ## Exact commands
 

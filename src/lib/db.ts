@@ -1,4 +1,4 @@
-import Database from "better-sqlite3";
+import { DatabaseSync } from "node:sqlite";
 import fs from "fs";
 import path from "path";
 import type { MediaItem, MediaItemRow, MediaType } from "./types";
@@ -7,7 +7,7 @@ import { ensureUploadDir } from "./storage";
 const DATA_DIR = path.join(process.cwd(), "data");
 const DB_PATH = path.join(DATA_DIR, "media.db");
 
-let dbInstance: Database.Database | null = null;
+let dbInstance: DatabaseSync | null = null;
 
 function rowToItem(row: MediaItemRow): MediaItem {
   return {
@@ -33,7 +33,7 @@ function rowToItem(row: MediaItemRow): MediaItem {
   };
 }
 
-export function getDb(): Database.Database {
+export function getDb(): DatabaseSync {
   if (dbInstance) return dbInstance;
 
   if (!fs.existsSync(DATA_DIR)) {
@@ -41,9 +41,9 @@ export function getDb(): Database.Database {
   }
   ensureUploadDir();
 
-  const db = new Database(DB_PATH);
-  db.pragma("journal_mode = WAL");
-  db.pragma("foreign_keys = ON");
+  const db = new DatabaseSync(DB_PATH);
+  db.exec("PRAGMA journal_mode = WAL");
+  db.exec("PRAGMA foreign_keys = ON");
 
   db.exec(`
     CREATE TABLE IF NOT EXISTS media_items (
@@ -69,15 +69,15 @@ export function getDb(): Database.Database {
   dbInstance = db;
 
   // Seed demo items once (when table is empty)
-  const count = db.prepare("SELECT COUNT(*) AS c FROM media_items").get() as { c: number };
-  if (count.c === 0) {
+  const count = db.prepare("SELECT COUNT(*) AS c FROM media_items").get() as unknown as { c: number } | undefined;
+  if (!count || count.c === 0) {
     seedDemoItems(db);
   }
 
   return db;
 }
 
-function seedDemoItems(db: Database.Database): void {
+function seedDemoItems(db: DatabaseSync): void {
   const insert = db.prepare(`
     INSERT INTO media_items
       (slug, title, description, type, tags, filename, original_name, mime_type, size_bytes, project_url, cover_filename)
@@ -102,7 +102,12 @@ function seedDemoItems(db: Database.Database): void {
   const demoFiles: { name: string; buf: Buffer }[] = [
     { name: "demo-studio.svg", buf: svg("Studio Still", "#3b4d7a") },
     { name: "demo-cover.svg", buf: svg("Project Cover", "#5b3d7a") },
-    { name: "demo-notes.txt", buf: Buffer.from("Welcome to your media hub.\nReplace this demo file anytime from the Admin page.\n") },
+    {
+      name: "demo-notes.txt",
+      buf: Buffer.from(
+        "Welcome to your media hub.\nReplace this demo file anytime from the Admin page.\n"
+      ),
+    },
   ];
   for (const f of demoFiles) {
     fs.writeFileSync(path.join(uploads, f.name), f.buf);
@@ -139,7 +144,8 @@ startxref
     {
       slug: "studio-still-demo",
       title: "Studio Still (Demo)",
-      description: "A placeholder image so the library is not empty on first launch. Replace or delete anytime.",
+      description:
+        "A placeholder image so the library is not empty on first launch. Replace or delete anytime.",
       type: "image",
       tags: "demo,studio,photo",
       filename: "demo-studio.svg",
@@ -152,7 +158,8 @@ startxref
     {
       slug: "welcome-notes-demo",
       title: "Welcome Notes (Demo)",
-      description: "A sample text document. Upload real docs, PDFs, and spreadsheets from Admin.",
+      description:
+        "A sample text document. Upload real docs, PDFs, and spreadsheets from Admin.",
       type: "doc",
       tags: "demo,notes",
       filename: "demo-notes.txt",
@@ -178,7 +185,8 @@ startxref
     {
       slug: "shape-morph-demo",
       title: "Shape Morph (Demo Project)",
-      description: "Example of an app/project entry — link out to a live URL with an optional cover image.",
+      description:
+        "Example of an app/project entry — link out to a live URL with an optional cover image.",
       type: "project",
       tags: "demo,app,project",
       filename: null,
@@ -190,10 +198,14 @@ startxref
     },
   ];
 
-  const tx = db.transaction(() => {
+  db.exec("BEGIN");
+  try {
     for (const d of demos) insert.run(d);
-  });
-  tx();
+    db.exec("COMMIT");
+  } catch (err) {
+    db.exec("ROLLBACK");
+    throw err;
+  }
 }
 
 export interface ListFilters {
@@ -227,25 +239,25 @@ export function listItems(filters: ListFilters = {}): MediaItem[] {
   }
 
   sql += " ORDER BY datetime(created_at) DESC, id DESC";
-  const rows = db.prepare(sql).all(params) as MediaItemRow[];
+  const rows = db.prepare(sql).all(params) as unknown as MediaItemRow[];
   return rows.map(rowToItem);
 }
 
 export function getItemBySlug(slug: string): MediaItem | null {
   const db = getDb();
-  const row = db.prepare("SELECT * FROM media_items WHERE slug = ?").get(slug) as MediaItemRow | undefined;
+  const row = db.prepare("SELECT * FROM media_items WHERE slug = ?").get(slug) as unknown as MediaItemRow | undefined;
   return row ? rowToItem(row) : null;
 }
 
 export function getItemById(id: number): MediaItem | null {
   const db = getDb();
-  const row = db.prepare("SELECT * FROM media_items WHERE id = ?").get(id) as MediaItemRow | undefined;
+  const row = db.prepare("SELECT * FROM media_items WHERE id = ?").get(id) as unknown as MediaItemRow | undefined;
   return row ? rowToItem(row) : null;
 }
 
 export function getAllTags(): string[] {
   const db = getDb();
-  const rows = db.prepare("SELECT tags FROM media_items").all() as { tags: string }[];
+  const rows = db.prepare("SELECT tags FROM media_items").all() as unknown as { tags: string }[];
   const set = new Set<string>();
   for (const r of rows) {
     for (const t of r.tags.split(",")) {
