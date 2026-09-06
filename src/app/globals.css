@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: #0b0d10;
+  color: #e8ecf4;
+  min-height: 100vh;
+}
+
+/* Soft studio backdrop */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(124, 156, 255, 0.14), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(167, 139, 250, 0.10), transparent 50%),
+    radial-gradient(ellipse 50% 30% at 50% 100%, rgba(52, 211, 153, 0.05), transparent 50%);
+  z-index: 0;
+}
+
+#__next,
+body > div {
+  position: relative;
+  z-index: 1;
+}
+
+@layer utilities {
+  .studio-card {
+    @apply rounded-2xl border border-studio-border bg-studio-card/80 backdrop-blur-sm;
+  }
+  .studio-input {
+    @apply w-full rounded-xl border border-studio-border bg-studio-panel px-3 py-2.5 text-studio-text
+      placeholder:text-studio-muted/70 outline-none transition
+      focus:border-studio-accent/60 focus:ring-2 focus:ring-studio-accent/20;
+  }
+  .studio-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium
+      transition active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .studio-btn-primary {
+    @apply studio-btn bg-studio-accent text-studio-bg hover:brightness-110 shadow-glow;
+  }
+  .studio-btn-ghost {
+    @apply studio-btn border border-studio-border bg-transparent text-studio-text hover:bg-studio-panel;
+  }
+  .studio-btn-danger {
+    @apply studio-btn border border-studio-danger/40 text-studio-danger hover:bg-studio-danger/10;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a3140;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
