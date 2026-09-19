@@ -9,7 +9,8 @@ export const metadata: Metadata = {
     default: siteName,
     template: `%s · ${siteName}`,
   },
-  description: "Personal studio / media library — images, videos, PDFs, projects, and more.",
+  description:
+    "Personal studio — media library and shop for digital products (checkout via Polar).",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -19,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">{children}</main>
         <footer className="mx-auto max-w-6xl px-4 pb-10 text-center text-xs text-studio-muted sm:px-6">
-          Personal media hub · Share links look like{" "}
+          Personal media hub · Library + Shop · Share links look like{" "}
           <span className="font-mono text-studio-muted/90">/i/your-slug</span>
         </footer>
       </body>

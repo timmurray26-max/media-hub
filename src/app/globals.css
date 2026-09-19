@@ -17,16 +17,16 @@ body {
   min-height: 100vh;
 }
 
-/* Soft studio backdrop */
+/* Soft studio backdrop — canary / amber warm highlights */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(124, 156, 255, 0.14), transparent 55%),
-    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(167, 139, 250, 0.10), transparent 50%),
-    radial-gradient(ellipse 50% 30% at 50% 100%, rgba(52, 211, 153, 0.05), transparent 50%);
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(245, 208, 0, 0.12), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(255, 176, 32, 0.10), transparent 50%),
+    radial-gradient(ellipse 50% 30% at 50% 100%, rgba(255, 229, 102, 0.05), transparent 50%);
   z-index: 0;
 }
 

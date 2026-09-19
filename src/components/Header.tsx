@@ -6,6 +6,12 @@ import { useEffect, useState } from "react";
 
 const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Media Hub";
 
+function navClass(active: boolean) {
+  return `studio-btn-ghost !px-3 !py-2 text-xs sm:text-sm ${
+    active ? "border-studio-accent/40 text-studio-accent" : ""
+  }`;
+}
+
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
@@ -42,23 +48,16 @@ export default function Header() {
           </div>
         </Link>
 
-        <nav className="flex items-center gap-2">
-          <Link
-            href="/"
-            className={`studio-btn-ghost !px-3 !py-2 text-xs sm:text-sm ${
-              pathname === "/" ? "border-studio-accent/40 text-studio-accent" : ""
-            }`}
-          >
+        <nav className="flex flex-wrap items-center justify-end gap-2">
+          <Link href="/" className={navClass(pathname === "/")}>
             Library
+          </Link>
+          <Link href="/shop" className={navClass(pathname === "/shop" || pathname.startsWith("/shop/"))}>
+            Shop
           </Link>
           {authed ? (
             <>
-              <Link
-                href="/admin"
-                className={`studio-btn-ghost !px-3 !py-2 text-xs sm:text-sm ${
-                  pathname === "/admin" ? "border-studio-accent/40 text-studio-accent" : ""
-                }`}
-              >
+              <Link href="/admin" className={navClass(pathname === "/admin")}>
                 Admin
               </Link>
               <button type="button" onClick={logout} className="studio-btn-ghost !px-3 !py-2 text-xs sm:text-sm">

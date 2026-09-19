@@ -8,6 +8,7 @@ import TagBadge from "@/components/TagBadge";
 import { isAuthenticated } from "@/lib/auth";
 import { getItemBySlug } from "@/lib/db";
 import { fileUrl, formatBytes, formatDate, sharePath } from "@/lib/format";
+import { findProductForItem } from "@/lib/products";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -30,6 +31,7 @@ export default async function ItemPage({ params }: Props) {
   if (!item) notFound();
   const authed = await isAuthenticated();
   const path = sharePath(item.slug);
+  const product = findProductForItem(item);
 
   return (
     <div className="space-y-8">
@@ -54,6 +56,32 @@ export default async function ItemPage({ params }: Props) {
           ))}
         </div>
       </div>
+
+      {product ? (
+        <div className="studio-card flex flex-col gap-3 border-studio-accent/25 bg-gradient-to-r from-studio-accent/10 to-studio-accent2/5 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1">
+            <p className="text-xs font-medium uppercase tracking-[0.16em] text-studio-accent">
+              Available in Shop
+            </p>
+            <p className="text-sm text-studio-text">
+              {product.title} · <span className="font-semibold text-white">{product.price}</span>
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <a
+              href={product.polarCheckoutUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="studio-btn-primary"
+            >
+              Buy
+            </a>
+            <Link href="/shop" className="studio-btn-ghost">
+              View Shop
+            </Link>
+          </div>
+        </div>
+      ) : null}
 
       <ItemPreview item={item} />
 

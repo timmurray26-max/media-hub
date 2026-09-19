@@ -100,8 +100,8 @@ function seedDemoItems(db: DatabaseSync): void {
     );
 
   const demoFiles: { name: string; buf: Buffer }[] = [
-    { name: "demo-studio.svg", buf: svg("Studio Still", "#3b4d7a") },
-    { name: "demo-cover.svg", buf: svg("Project Cover", "#5b3d7a") },
+    { name: "demo-studio.svg", buf: svg("Studio Still", "#8a7010") },
+    { name: "demo-cover.svg", buf: svg("Project Cover", "#a67c18") },
     {
       name: "demo-notes.txt",
       buf: Buffer.from(
